@@ -1,5 +1,3 @@
-<?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -13,7 +11,7 @@ class InfoController extends Controller
         phpinfo(INFO_GENERAL);
         $phpinfo = ob_get_clean();
 
-        return response()->json(['php_info' => $phpinfo]);
+        return $phpinfo;
     }
 
     public function getClientInfo(Request $request)
@@ -21,13 +19,13 @@ class InfoController extends Controller
         $ip = $request->ip();
         $userAgent = $request->header('User-Agent');
 
-        return response()->json(['ip' => $ip, 'user_agent' => $userAgent]);
+        return $userAgent;
     }
 
     public function getDatabaseInfo()
     {
-        $databaseName = DB::connection()->getDatabaseName();
+        $databaseName = DB::getDatabaseName();
 
-        return response()->json(['database_name' => $databaseName]);
+        return $databaseName;
     }
 }
