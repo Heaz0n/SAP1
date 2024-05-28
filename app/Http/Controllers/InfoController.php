@@ -7,14 +7,12 @@ use Illuminate\Support\Facades\DB;
 
 class InfoController extends Controller
 {
-    public function serverInfo()
+    public function server()
     {
-        return response()->json([
-            'php_version' => phpversion()
-        ]);
+        return response()->json(['php_version' => phpversion()]);
     }
 
-    public function clientInfo(Request $request)
+    public function client(Request $request)
     {
         return response()->json([
             'ip' => $request->ip(),
@@ -22,20 +20,18 @@ class InfoController extends Controller
         ]);
     }
 
-    public function databaseInfo()
+    public function database()
     {
-        $connection = config('database.default');
-        $driver = config("database.connections.{$connection}.driver");
-
-        if ($driver === 'sqlite') {
-            $database = config("database.connections.{$connection}.database");
-        } else {
-            $database = DB::connection()->getDatabaseName();
+        try {
+            $connection = DB::connection();
+            $dbInfo = [
+                'driver' => $connection->getDriverName(),
+                'database' => $connection->getDatabaseName(),
+                'host' => $connection->getConfig('host'),
+            ];
+            return response()->json($dbInfo);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Could not connect to the database'], 500);
         }
-
-        return response()->json([
-            'driver' => $driver,
-            'database' => $database
-        ]);
     }
 }
