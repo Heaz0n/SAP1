@@ -1,18 +1,18 @@
 <?php
-    namespace app\DTO;
+namespace App\DTO;
 
-    class RegisterDTO {
+class RegisterDTO {
 
-        public $username;
-        public $password;
-        public $email;
-        public $birthday;
+    public $username;
+    public $password;
+    public $email;
+    public $birthday;
 
-        public function __construct($username, $password, $email, $birthday) 
-        {
-            $this->username = $username;
-            $this->password = $password;
-            $this->email = $email;
-            $this->birthday = $birthday;
-        }
+    public function __construct($username, $password, $email, $birthday) 
+    {
+        $this->username = $username;
+        $this->password = $password;
+        $this->email = $email;
+        $this->birthday = $birthday;
     }
+}

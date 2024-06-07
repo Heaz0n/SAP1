@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use App\DTO\LoginDTO;
 
 class LoginRequest extends FormRequest
 {
@@ -14,8 +15,16 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => 'required|string|alpha|starts_with:^[A-Z]|min:7',
-            'password' => 'required|string|min:8|regex:/[0-9]/|regex:/[a-z]/|regex:/[A-Z]/|regex:/[@$!%*?&]/',
+            'username' => 'required|string|alpha|min:7|regex:/^[A-Z][a-zA-Z]*$/',
+            'password' => 'required|string|min:8|regex:/[0-9]/|regex:/[!@#$%^&*(),.?":{}|<>]/|regex:/[a-z]/|regex:/[A-Z]/',
         ];
+    }
+
+    public function toDto()
+    {
+        return new LoginDTO(
+            $this->get('username'),
+            $this->get('password')
+        );
     }
 }

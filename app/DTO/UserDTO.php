@@ -1,20 +1,20 @@
 <?php
-    namespace app\DTO;
+namespace App\DTO;
 
-    class UserDTO {
+class UserDTO {
 
-        public $id;
-        public $username;
-        public $email;
-        public $dateOfBirth;
-        public $created_at;
+    public $id;
+    public $username;
+    public $email;
+    public $dateOfBirth;
+    public $createdAt;
 
-        public function __construct($id, $username, $email, $dateOfBirth, $created_at) 
-        {
-            $this->id = $id;
-            $this->username = $username;
-            $this->email = $email;
-            $this->dateOfBirth = $dateOfBirth;
-            $this->created_at = $created_at;
-        }
+    public function __construct($id, $username, $email, $dateOfBirth, $createdAt) 
+    {
+        $this->id = $id;
+        $this->username = $username;
+        $this->email = $email;
+        $this->dateOfBirth = $dateOfBirth;
+        $this->createdAt = $createdAt;
     }
+}
