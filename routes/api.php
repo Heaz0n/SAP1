@@ -19,10 +19,10 @@ Route::prefix('auth')->group(function () {
     Route::post('register', [AuthController::class, 'register']);
     Route::post('login', [AuthController::class, 'login']);
     
-    Route::middleware('auth:sanctum')->group(function () {
+    Route::middleware('auth:api')->group(function () {
         Route::get('me', [AuthController::class, 'me']);
         Route::post('logout', [AuthController::class, 'logout']);
         Route::get('tokens', [AuthController::class, 'tokens']);
-        Route::post('logoutAll', [AuthController::class, 'logoutAll']);
+        Route::post('revoke-all-tokens', [AuthController::class, 'revokeAllTokens']);
     });
 });

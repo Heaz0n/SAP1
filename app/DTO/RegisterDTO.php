@@ -3,10 +3,10 @@ namespace App\DTO;
 
 class RegisterDTO {
 
-    public $username;
-    public $password;
-    public $email;
-    public $birthday;
+    public string $username;
+    public string $email;
+    public string $password;
+    public string $birthday;
 
     public function __construct($username, $password, $email, $birthday) 
     {

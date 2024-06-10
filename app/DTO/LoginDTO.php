@@ -2,8 +2,8 @@
 namespace App\DTO;
 
 class LoginDTO {
-    public $username;
-    public $password;
+    public string $username;
+    public string $password;
 
     public function __construct($username, $password) 
     {   
