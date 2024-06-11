@@ -7,25 +7,25 @@ use Illuminate\Support\Facades\DB;
 
 class InfoController extends Controller
 {
-    public function serverInfo()
+    public function server()
     {
-        ob_start();
-        phpinfo();
-        $phpinfo = ob_get_clean();
-        return response()->json(['phpinfo' => $phpinfo]);
+        return response()->json(['php_version' => phpversion()]);
     }
 
-    public function clientInfo(Request $request)
+    public function client(Request $request)
     {
         return response()->json([
             'ip' => $request->ip(),
-            'user_agent' => $request->header('User-Agent')
+            'user_agent' => $request->header('User-Agent'),
         ]);
     }
 
-    public function databaseInfo()
+    public function database()
     {
-        $database = DB::connection()->getDatabaseName();
-        return response()->json(['database' => $database]);
+        $connection = DB::connection();
+        return response()->json([
+            'database_connection' => $connection->getConfig('driver'),
+            'database_name' => $connection->getDatabaseName(),
+        ]);
     }
 }
