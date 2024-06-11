@@ -9,7 +9,10 @@ class InfoController extends Controller
 {
     public function serverInfo()
     {
-        return response()->json(['php_version' => phpversion()]);
+        ob_start();
+        phpinfo();
+        $phpinfo = ob_get_clean();
+        return response()->json(['phpinfo' => $phpinfo]);
     }
 
     public function clientInfo(Request $request)
@@ -22,9 +25,7 @@ class InfoController extends Controller
 
     public function databaseInfo()
     {
-        $connection = DB::connection()->getPDO();
-        $database = $connection->query('select database()')->fetchColumn();
-
+        $database = DB::connection()->getDatabaseName();
         return response()->json(['database' => $database]);
     }
 }
