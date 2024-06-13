@@ -14,14 +14,10 @@ Route::prefix('info')->group(function () {
     Route::get('/database', [InfoController::class, 'database']);
 });
 
+// Страницы регистрации и логина
 Route::get('/register', function () {
     return view('auth.register');
-})->name('auth.register');
-
-Route::post('register', [AuthController::class, 'register'])->name('auth.register');
-
+});
 Route::get('/login', function () {
     return view('auth.login');
-})->name('auth.login');
-
-Route::post('login', [AuthController::class, 'login'])->name('auth.login');
+});

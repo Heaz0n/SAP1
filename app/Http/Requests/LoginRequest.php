@@ -3,23 +3,28 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use App\DTOs\AuthDTO;
+use Illuminate\Validation\Rules\Password;
 
 class LoginRequest extends FormRequest
 {
+    public function authorize()
+    {
+        return true;
+    }
+
     public function rules()
     {
         return [
-            'username' => 'required|string|alpha|min:7',
-            'password' => 'required|string|min:8',
+            'username' => 'required|min:7|alpha:ascii|regex:/^[A-Z]/',
+            'password' => ['required', Password::min(8)->letters()->numbers()->mixedCase()],
         ];
     }
 
     public function createDTO()
     {
-        return new AuthDTO(
-            $this->input('username'),
-            $this->input('password')
-        );
+        return (object) [
+            'username' => $this->input('username'),
+            'password' => $this->input('password'),
+        ];
     }
 }
