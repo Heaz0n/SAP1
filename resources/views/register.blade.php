@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Register</h1>
-    <form action="{{ route('auth.register') }}" method="POST">
+    <form action="{{ route('register') }}" method="POST">
         @csrf
         <div>
             <label for="username">Username:</label>
@@ -20,10 +20,6 @@
         <div>
             <label for="password">Password:</label>
             <input type="password" id="password" name="password" required>
-        </div>
-        <div>
-            <label for="password_confirmation">Confirm Password:</label>
-            <input type="password" id="password_confirmation" name="password_confirmation" required>
         </div>
         <div>
             <label for="birthday">Birthday:</label>

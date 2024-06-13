@@ -7,7 +7,7 @@
 </head>
 <body>
     <h1>Login</h1>
-    <form action="{{ route('auth.login') }}" method="POST">
+    <form action="{{ route('login') }}" method="POST">
         @csrf
         <div>
             <label for="username">Username:</label>

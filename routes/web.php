@@ -16,8 +16,8 @@ Route::prefix('info')->group(function () {
 
 // Страницы регистрации и логина
 Route::get('/register', function () {
-    return view('auth.register');
+    return view('register');
 });
 Route::get('/login', function () {
-    return view('auth.login');
+    return view('login');
 });
