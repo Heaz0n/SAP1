@@ -2,8 +2,6 @@
 
 namespace App\DTOs;
 
-use App\Models\User;
-
 class RegistrationDTO
 {
     public $username;
@@ -11,12 +9,12 @@ class RegistrationDTO
     public $password;
     public $birthday;
 
-    public function __construct(User $user)
+    public function __construct($username, $email, $password, $birthday)
     {
-        $this->username = $user->name;
-        $this->email = $user->email;
-        $this->password = $user->password;
-        $this->birthday = $user->birthday;
+        $this->username = $username;
+        $this->email = $email;
+        $this->password = $password;
+        $this->birthday = $birthday;
     }
 
     public function toArray()
@@ -24,7 +22,6 @@ class RegistrationDTO
         return [
             'username' => $this->username,
             'email' => $this->email,
-            'password' => $this->password,
             'birthday' => $this->birthday,
         ];
     }

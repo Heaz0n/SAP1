@@ -8,8 +8,8 @@ class UserDTO
     public $username;
     public $email;
     public $birthday;
-    public $created_at;
-    public $updated_at;
+    public $createdAt;
+    public $updatedAt;
 
     public function __construct($user)
     {
@@ -17,8 +17,8 @@ class UserDTO
         $this->username = $user->username;
         $this->email = $user->email;
         $this->birthday = $user->birthday;
-        $this->created_at = $user->created_at;
-        $this->updated_at = $user->updated_at;
+        $this->createdAt = $user->created_at;
+        $this->updatedAt = $user->updated_at;
     }
 
     public function toArray()
@@ -28,8 +28,8 @@ class UserDTO
             'username' => $this->username,
             'email' => $this->email,
             'birthday' => $this->birthday,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => $this->createdAt,
+            'updated_at' => $this->updatedAt,
         ];
     }
 }

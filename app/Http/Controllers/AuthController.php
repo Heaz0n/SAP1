@@ -13,12 +13,13 @@ use Illuminate\Support\Facades\Hash;
 use App\DTOs\UserDTO;
 use App\DTOs\AuthDTO;
 use App\DTOs\RegistrationDTO;
-use Laravel\Passport\Passport;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request) {
+    public function register(RegisterRequest $request) 
+    {
         $userData = $request->createDTO();
+        
         $user = User::create([
             'username' => $userData->username,
             'email' => $userData->email,
@@ -28,18 +29,23 @@ class AuthController extends Controller
             'updated_at' => now(),
         ]);
 
-        $registrationDTO = new RegistrationDTO($user);
+        $registrationDTO = new RegistrationDTO(
+            $user->username,
+            $user->email,
+            $request->input('password'),
+            $user->birthday
+        );
 
         return response()->json($registrationDTO->toArray(), Response::HTTP_CREATED);
     }
 
     public function login(LoginRequest $request)
     {
-        $userdata = $request->createDTO();
+        $userData = $request->createDTO();
 
-        $user = User::where('username', $userdata->username)->first();
+        $user = User::where('username', $userData->username)->first();
 
-        if (!$user || !Hash::check($userdata->password, $user->password)) {
+        if (!$user || !Hash::check($userData->password, $user->password)) {
             return response()->json(['message' => 'Unauthorized'], 401);
         }
 
@@ -56,7 +62,11 @@ class AuthController extends Controller
         $token->expires_at = Carbon::now()->addDays(env('TOKEN_EXPIRATION_DAYS', 15));
         $token->save();
 
-        $authDTO = new AuthDTO($tokenResult->accessToken, 'Bearer', Carbon::parse($tokenResult->token->expires_at)->toDateTimeString());
+        $authDTO = new AuthDTO(
+            $tokenResult->accessToken,
+            'Bearer',
+            Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
+        );
 
         return response()->json($authDTO->toArray());
     }
@@ -76,14 +86,16 @@ class AuthController extends Controller
         return response()->json(['tokens' => $activeTokens]);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request) 
+    {
         $user = $request->user();
         $user->token()->revoke();
 
         return response()->json(["message" => "Token is logout"], 200);
     }
 
-    public function logoutAll(Request $request) {
+    public function logoutAll(Request $request) 
+    {
         $user = $request->user();
 
         $user->tokens->each(function($token, $key) {

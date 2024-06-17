@@ -4,20 +4,23 @@ namespace App\DTOs;
 
 class AuthDTO
 {
-    public $username;
-    public $password;
+    public $accessToken;
+    public $tokenType;
+    public $expiresAt;
 
-    public function __construct($username, $password)
+    public function __construct($accessToken, $tokenType, $expiresAt)
     {
-        $this->username = $username;
-        $this->password = $password;
+        $this->accessToken = $accessToken;
+        $this->tokenType = $tokenType;
+        $this->expiresAt = $expiresAt;
     }
 
     public function toArray()
     {
         return [
-            'username' => $this->username,
-            'password' => $this->password,
+            'access_token' => $this->accessToken,
+            'token_type' => $this->tokenType,
+            'expires_at' => $this->expiresAt,
         ];
     }
 }
