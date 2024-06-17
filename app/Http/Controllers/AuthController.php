@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use App\DTOs\UserDTO;
 use App\DTOs\AuthDTO;
 use App\DTOs\RegistrationDTO;
+use Laravel\Passport\Token;
 
 class AuthController extends Controller
 {
@@ -25,8 +26,6 @@ class AuthController extends Controller
             'email' => $userData->email,
             'password' => bcrypt($userData->password),
             'birthday' => $userData->birthday,
-            'created_at' => now(),
-            'updated_at' => now(),
         ]);
 
         $registrationDTO = new RegistrationDTO(
@@ -46,20 +45,15 @@ class AuthController extends Controller
         $user = User::where('username', $userData->username)->first();
 
         if (!$user || !Hash::check($userData->password, $user->password)) {
-            return response()->json(['message' => 'Unauthorized'], 401);
+            return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
 
-        $activeTokens = $user->tokens()->where('revoked', 0)->latest()->get();
-        $activeTokenCount = $activeTokens->count();
-
-        if ($activeTokenCount >= env('MAX_ACTIVE_TOKENS', 3)) {
-            $oldestActiveToken = $activeTokens->last();
-            $oldestActiveToken->revoke();
-        }
+        // Revoke all existing tokens for the user
+        $user->tokens()->delete();
 
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
-        $token->expires_at = Carbon::now()->addDays(env('TOKEN_EXPIRATION_DAYS', 15));
+        $token->expires_at = Carbon::now()->addDays(env('TOKEN_EXPIRATION_DAYS', 3));
         $token->save();
 
         $authDTO = new AuthDTO(
@@ -81,27 +75,22 @@ class AuthController extends Controller
     public function tokens(Request $request)
     {
         $user = $request->user();
-        $activeTokens = $user->tokens()->where('revoked', 0)->get();
+        $activeTokens = $user->tokens()->where('revoked', false)->get();
 
         return response()->json(['tokens' => $activeTokens]);
     }
 
     public function logout(Request $request) 
     {
-        $user = $request->user();
-        $user->token()->revoke();
-
-        return response()->json(["message" => "Token is logout"], 200);
+        $request->user()->token()->revoke();
+    
+        return response()->json(["message" => "Logged out successfully"], Response::HTTP_OK);
     }
-
+    
     public function logoutAll(Request $request) 
     {
-        $user = $request->user();
+        $request->user()->tokens()->delete();
 
-        $user->tokens->each(function($token, $key) {
-            $token->revoke();
-        });
-
-        return response()->json(["message" => "All tokens are logged out"], 200);
+        return response()->json(["message" => "All tokens revoked"], Response::HTTP_OK);
     }
 }
