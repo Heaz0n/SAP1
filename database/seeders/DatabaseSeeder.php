@@ -5,19 +5,19 @@ namespace Database\Seeders;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Laravel\Passport\ClientRepository;
 
-class DatabaseSeeder extends Seeder
+class PassportClientSeeder extends Seeder
 {
-    /**
-     * Seed the application's database.
-     */
-    public function run(): void
+    public function run()
     {
-        // User::factory(10)->create();
+        $clientRepository = new ClientRepository();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // Пример создания клиентского приложения
+        $clientRepository->create(
+            null, // user_id
+            'My Client Name', // name
+            'http://localhost/auth/callback' // redirect
+        );
     }
 }

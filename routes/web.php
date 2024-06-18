@@ -12,3 +12,11 @@ Route::prefix('info')->group(function () {
     Route::get('/client', [InfoController::class, 'client']);
     Route::get('/database', [InfoController::class, 'database']);
 });
+
+// Страницы регистрации и логина
+Route::get('/login', function () {
+    return view('login');
+});
+Route::get('/register', function () {
+    return view('register');
+});
