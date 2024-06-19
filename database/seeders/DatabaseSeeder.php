@@ -1,23 +1,18 @@
 <?php
 
-namespace Database\Seeders;
-
-use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Laravel\Passport\ClientRepository;
+use Database\Seeders\RolesTableSeeder;
+use Database\Seeders\PermissionsTableSeeder;
+use Database\Seeders\UsersAndRolesTableSeeder;
+use Database\Seeders\RolesAndPermissionsTableSeeder;
 
-class PassportClientSeeder extends Seeder
+class DatabaseSeeder extends Seeder
 {
     public function run()
     {
-        $clientRepository = new ClientRepository();
-
-        // Пример создания клиентского приложения
-        $clientRepository->create(
-            null, // user_id
-            'My Client Name', // name
-            'http://localhost/auth/callback' // redirect
-        );
+        $this->call(RolesTableSeeder::class);
+        $this->call(PermissionsTableSeeder::class);
+        $this->call(UsersAndRolesTableSeeder::class);
+        $this->call(RolesAndPermissionsTableSeeder::class);
     }
 }

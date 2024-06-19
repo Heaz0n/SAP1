@@ -13,14 +13,21 @@ use Illuminate\Support\Facades\Hash;
 use App\DTOs\UserDTO;
 use App\DTOs\AuthDTO;
 use App\DTOs\RegistrationDTO;
-use Laravel\Passport\Token;
 
 class AuthController extends Controller
 {
-    public function register(RegisterRequest $request) 
+    /**
+     * Register a new user.
+     * 
+     * @param RegisterRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function register(RegisterRequest $request): \Illuminate\Http\JsonResponse
     {
+        // Create DTO from request
         $userData = $request->createDTO();
         
+        // Create user
         $user = User::create([
             'username' => $userData->username,
             'email' => $userData->email,
@@ -28,6 +35,7 @@ class AuthController extends Controller
             'birthday' => $userData->birthday,
         ]);
 
+        // Create Registration DTO
         $registrationDTO = new RegistrationDTO(
             $user->username,
             $user->email,
@@ -35,15 +43,25 @@ class AuthController extends Controller
             $user->birthday
         );
 
+        // Return registration data as JSON
         return response()->json($registrationDTO->toArray(), Response::HTTP_CREATED);
     }
 
-    public function login(LoginRequest $request)
+    /**
+     * Login a user and return a token.
+     * 
+     * @param LoginRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function login(LoginRequest $request): \Illuminate\Http\JsonResponse
     {
+        // Create DTO from request
         $userData = $request->createDTO();
 
+        // Find user by username
         $user = User::where('username', $userData->username)->first();
 
+        // Check if user exists and password is correct
         if (!$user || !Hash::check($userData->password, $user->password)) {
             return response()->json(['message' => 'Unauthorized'], Response::HTTP_UNAUTHORIZED);
         }
@@ -51,28 +69,43 @@ class AuthController extends Controller
         // Revoke all existing tokens for the user
         $user->tokens()->delete();
 
+        // Create a new token
         $tokenResult = $user->createToken('Personal Access Token');
         $token = $tokenResult->token;
         $token->expires_at = Carbon::now()->addDays(env('TOKEN_EXPIRATION_DAYS', 3));
         $token->save();
 
+        // Create Auth DTO
         $authDTO = new AuthDTO(
             $tokenResult->accessToken,
             'Bearer',
             Carbon::parse($tokenResult->token->expires_at)->toDateTimeString()
         );
 
+        // Return token data as JSON
         return response()->json($authDTO->toArray());
     }
 
-    public function me(Request $request)
+    /**
+     * Get authenticated user details.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function me(Request $request): \Illuminate\Http\JsonResponse
     {
         $userDTO = new UserDTO($request->user());
 
         return response()->json($userDTO->toArray());
     }
 
-    public function tokens(Request $request)
+    /**
+     * Get active tokens for the authenticated user.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function tokens(Request $request): \Illuminate\Http\JsonResponse
     {
         $user = $request->user();
         $activeTokens = $user->tokens()->where('revoked', false)->get();
@@ -80,14 +113,26 @@ class AuthController extends Controller
         return response()->json(['tokens' => $activeTokens]);
     }
 
-    public function logout(Request $request) 
+    /**
+     * Logout the authenticated user by revoking the current token.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logout(Request $request): \Illuminate\Http\JsonResponse 
     {
         $request->user()->token()->revoke();
     
         return response()->json(["message" => "Logged out successfully"], Response::HTTP_OK);
     }
     
-    public function logoutAll(Request $request) 
+    /**
+     * Logout the authenticated user by revoking all tokens.
+     * 
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function logoutAll(Request $request): \Illuminate\Http\JsonResponse 
     {
         $request->user()->tokens()->delete();
 
