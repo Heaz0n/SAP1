@@ -10,8 +10,10 @@ class UserDTO
     public $birthday;
     public $createdAt;
     public $updatedAt;
+    public $roles;
+    public $permissions;
 
-    public function __construct($user)
+    public function __construct($user, $roles = [], $permissions = [])
     {
         $this->id = $user->id;
         $this->username = $user->username;
@@ -19,6 +21,8 @@ class UserDTO
         $this->birthday = $user->birthday;
         $this->createdAt = $user->created_at;
         $this->updatedAt = $user->updated_at;
+        $this->roles = $roles;
+        $this->permissions = $permissions;
     }
 
     public function toArray()
@@ -30,6 +34,8 @@ class UserDTO
             'birthday' => $this->birthday,
             'created_at' => $this->createdAt,
             'updated_at' => $this->updatedAt,
+            'roles' => $this->roles,
+            'permissions' => $this->permissions,
         ];
     }
 }
