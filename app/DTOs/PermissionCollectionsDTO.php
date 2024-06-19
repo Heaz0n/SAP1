@@ -3,13 +3,12 @@
 namespace App\DTOs;
 
 use Illuminate\Support\Collection;
-use App\DTOs\PermissionDTO;
-use App\Models\Permission;
 
 class PermissionCollectionsDTO
 {
-    public $permissions;
-    public function __construct($permissions)
+    protected $permissions;
+
+    public function __construct(Collection $permissions)
     {
         $this->permissions = $permissions->map(function ($permission) {
             return new PermissionDTO(
@@ -20,5 +19,10 @@ class PermissionCollectionsDTO
                 $permission->deleted_by
             );
         });
+    }
+
+    public function getPermissions()
+    {
+        return $this->permissions;
     }
 }

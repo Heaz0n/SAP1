@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 
 class PermissionCollectionDTO
 {
-    public $permissions;
+    protected $permissions;
 
     public function __construct(Collection $permissions)
     {
@@ -19,5 +19,10 @@ class PermissionCollectionDTO
                 $permission->deleted_by
             );
         });
+    }
+
+    public function getPermissions()
+    {
+        return $this->permissions;
     }
 }

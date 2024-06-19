@@ -3,12 +3,10 @@
 namespace App\DTOs;
 
 use Illuminate\Support\Collection;
-use App\DTOs\UserDTO;
-use App\Models\User;
 
 class UserCollectionDTO
 {
-    public $users;
+    protected $users;
 
     public function __construct(Collection $users)
     {
@@ -19,5 +17,10 @@ class UserCollectionDTO
                 $user->permissions()
             );
         });
+    }
+
+    public function getUsers()
+    {
+        return $this->users;
     }
 }

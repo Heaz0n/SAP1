@@ -30,13 +30,13 @@ public function getUserRoles(UserRequest $request)
 
 public function giveUserRoles(CreateUserAndRoleRequest $request)
 {
-    $user_id = $request->id;
+    $user_id = $request->input('user_id');
     $role_id = $request->input('role_id');
     
     $count = UsersAndRoles::where('user_id', $user_id)->where('role_id', $role_id)->count();
     
-    if ($count) {
-        return response()->json(['error' => 'The user already has such a role']);
+    if ($count > 0) {
+        return response()->json(['error' => 'The user already has such a role'], 400);
     }
 
     UsersAndRoles::create([
