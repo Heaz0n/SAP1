@@ -28,7 +28,6 @@ class Kernel extends HttpKernel
      */
     protected $middlewareGroups = [
         'web' => [
-            \Laravel\Passport\Http\Middleware\CreateFreshApiToken::class,
             \App\Http\Middleware\EncryptCookies::class,
             \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
             \Illuminate\Session\Middleware\StartSession::class,
@@ -42,6 +41,38 @@ class Kernel extends HttpKernel
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
+
+        'auth' => [
+            \Illuminate\Auth\Middleware\Authenticate::class,
+        ],
+
+        'auth.basic' => [
+            \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        ],
+
+        'can' => [
+            \Illuminate\Auth\Middleware\Authorize::class,
+        ],
+
+        'guest' => [
+            \App\Http\Middleware\RedirectIfAuthenticated::class,
+        ],
+
+        'password.confirm' => [
+            \Illuminate\Auth\Middleware\RequirePassword::class,
+        ],
+
+        'signed' => [
+            \Illuminate\Routing\Middleware\ValidateSignature::class,
+        ],
+
+        'throttle' => [
+            \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        ],
+
+        'verified' => [
+            \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
+        ],
     ];
 
     /**
@@ -52,16 +83,8 @@ class Kernel extends HttpKernel
      * @var array<string, string>
      */
     protected $routeMiddleware = [
-        'auth' => \App\Http\Middleware\Authenticate::class,
-        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
-        'cache.headers' => \Illuminate\Http\Middleware\SetCacheHeaders::class,
-        'can' => \Illuminate\Auth\Middleware\Authorize::class,
-        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
-        'password.confirm' => \Illuminate\Auth\Middleware\RequirePassword::class,
-        'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
-        'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
-        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class
+        'bindings' => \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        'can' => \App\Http\Middleware\CheckChangeLogPermissions::class, // Заменили на наш middleware
     ];
 
     /**

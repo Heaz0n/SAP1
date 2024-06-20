@@ -7,6 +7,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleAndPermissionController;
+use App\Http\Controllers\ChangeLogController;
 
 // Authentication Routes
 Route::prefix('auth')->group(function () {
@@ -32,6 +33,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('{id}/role/{roleId}', [UserController::class, 'hardDeleteUserRole']);
         Route::delete('{id}/role/{roleId}/soft', [UserController::class, 'softDeleteUserRole']);
         Route::post('{id}/role/{roleId}/restore', [UserController::class, 'restoreDeletedUserRole']);
+        Route::get('{id}/story', [ChangeLogController::class, 'getUserChangeLog']);
     });
 
     // Role Routes
@@ -43,6 +45,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{id}', [RoleController::class, 'deleteRole']);
         Route::delete('/{id}/soft', [RoleController::class, 'softDeleteRole']);
         Route::post('/{id}/restore', [RoleController::class, 'restoreRole']);
+        Route::get('/{id}/story', [ChangeLogController::class, 'getRoleChangeLog']);
     });
 
     // Permission Routes
@@ -54,6 +57,7 @@ Route::middleware('auth:api')->group(function () {
         Route::delete('/{id}', [PermissionController::class, 'deletePermission']);
         Route::delete('/{id}/soft', [PermissionController::class, 'softDeletePermission']);
         Route::post('/{id}/restore', [PermissionController::class, 'restorePermission']);
+        Route::get('/{id}/story', [ChangeLogController::class, 'getPermissionChangeLog']);
     });
 
     // Role and Permission Routes
@@ -63,5 +67,12 @@ Route::middleware('auth:api')->group(function () {
         Route::get('/{id}', [RoleAndPermissionController::class, 'getRoleAndPermission']);
         Route::put('/{id}', [RoleAndPermissionController::class, 'updateRoleAndPermission']);
         Route::delete('/{id}', [RoleAndPermissionController::class, 'deleteRoleAndPermission']);
+    });
+
+    // Change Log Routes
+    Route::prefix('ref/log')->group(function () {
+        Route::get('user/{id}/story', [ChangeLogController::class, 'getUserChangeLog'])->where('id', '[0-9]+');
+        Route::get('policy/role/{id}/story', [ChangeLogController::class, 'getRoleChangeLog'])->where('id', '[0-9]+');
+        Route::get('policy/permission/{id}/story', [ChangeLogController::class, 'getPermissionChangeLog'])->where('id', '[0-9]+');
     });
 });
