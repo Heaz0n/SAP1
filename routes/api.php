@@ -8,6 +8,7 @@ use App\Http\Controllers\RoleController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\RoleAndPermissionController;
 use App\Http\Controllers\ChangeLogController;
+use App\Http\Controllers\TwoFactorController;
 
 // Authentication Routes
 Route::prefix('auth')->group(function () {
@@ -19,10 +20,7 @@ Route::prefix('auth')->group(function () {
         Route::post('/out', [AuthController::class, 'logout'])->name('logout');
         Route::get('/tokens', [AuthController::class, 'tokens'])->name('tokens');
         Route::post('/out_all', [AuthController::class, 'logoutAll'])->name('logoutAll');
-        Route::post('/request-new-two-factor-code', [AuthController::class, 'requestNewTwoFactorCode'])->name('requestNewTwoFactorCode');
     });
-
-    Route::post('/confirm-two-factor', [AuthController::class, 'confirmTwoFactor'])->name('confirmTwoFactor');
 });
 
 // Protected Routes
@@ -77,5 +75,11 @@ Route::middleware('auth:api')->group(function () {
         Route::get('user/{id}/story', [ChangeLogController::class, 'getUserChangeLog'])->where('id', '[0-9]+');
         Route::get('policy/role/{id}/story', [ChangeLogController::class, 'getRoleChangeLog'])->where('id', '[0-9]+');
         Route::get('policy/permission/{id}/story', [ChangeLogController::class, 'getPermissionChangeLog'])->where('id', '[0-9]+');
+    });
+
+    // Two-Factor Authentication Routes
+    Route::prefix('auth')->group(function () {
+        Route::post('/request-new-two-factor-code', [TwoFactorController::class, 'generate'])->name('requestNewTwoFactorCode');
+        Route::post('/confirm-two-factor', [TwoFactorController::class, 'validateCode'])->name('confirmTwoFactor');
     });
 });
