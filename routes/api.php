@@ -19,7 +19,10 @@ Route::prefix('auth')->group(function () {
         Route::post('/out', [AuthController::class, 'logout'])->name('logout');
         Route::get('/tokens', [AuthController::class, 'tokens'])->name('tokens');
         Route::post('/out_all', [AuthController::class, 'logoutAll'])->name('logoutAll');
+        Route::post('/request-new-two-factor-code', [AuthController::class, 'requestNewTwoFactorCode'])->name('requestNewTwoFactorCode');
     });
+
+    Route::post('/confirm-two-factor', [AuthController::class, 'confirmTwoFactor'])->name('confirmTwoFactor');
 });
 
 // Protected Routes

@@ -7,16 +7,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Carbon\Carbon;
 
 class User extends Authenticatable
 {
     use HasApiTokens, Notifiable, SoftDeletes, HasFactory;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array<int, string>
-     */
     protected $fillable = [
         'username',
         'email',
@@ -25,38 +21,42 @@ class User extends Authenticatable
         'created_at',
         'updated_at',
         'deleted_at',
+        'two_factor_code',
+        'two_factor_expires_at',
     ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var array<int, string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
+        'two_factor_code',
     ];
 
-    /**
-     * The attributes that should be cast.
-     *
-     * @var array<string, string>
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'password' => 'hashed',
+        'two_factor_expires_at' => 'datetime',
     ];
 
     /**
-     * Get the roles associated with the user.
+     * Generate a new two-factor authentication code and set its expiration time.
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     * @return void
      */
-    public function roles()
+    public function generateTwoFactorCode()
     {
-        return $this->belongsToMany(Role::class, 'users_and_roles', 'user_id', 'role_id')
-                    ->using(UsersAndRoles::class)
-                    ->withPivot('created_by', 'deleted_by')
-                    ->withTimestamps();
+        $this->two_factor_code = rand(100000, 999999);
+        $this->two_factor_expires_at = Carbon::now()->addMinutes(config('auth.two_factor_expiration'));
+        $this->save();
+    }
+
+    /**
+     * Reset the two-factor authentication code and its expiration time.
+     *
+     * @return void
+     */
+    public function resetTwoFactorCode()
+    {
+        $this->two_factor_code = null;
+        $this->two_factor_expires_at = null;
+        $this->save();
     }
 }
